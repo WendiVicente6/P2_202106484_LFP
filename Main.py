@@ -125,7 +125,7 @@ def Mostrar():
 def Arbol_Gramatica(resp):
     z = False
     while not z:
-        try:
+
             if resp in lista_nombres_Gramatica:
                 j = lista_nombres_Gramatica(resp)
                 resp = j+1
@@ -163,50 +163,71 @@ def Arbol_Gramatica(resp):
                         dot.edge('nodo'+str(indice), 'nodo'+str(z))
                     listaP = []
                     aux = 0
-                print('\nAbriendo el archivo generado...\n')
                 dot.render('GramaticasLC/'+lista_Gramaticas[r_2].nombre, format='png' ,view=True)
-
-            elif int(resp) <0:
-                print('\nERROR: Selecciona una opcion valida\n')
 
             else:
                 z = True
-        except:
-            print("\nPor favor seleccione una opción correcta...")
 
-def GramaticasLC():
-    a = True
-    b = False
-    while a == True:
-        while b == False:
-            op = str(input("Selecciona una opcion para continuar \n"))
-            if op == '1':
-                Cargar_Gramatica()
-                break
-            elif op == '2':
-                # MostrarInfo_Gramatica()
-                break
-            elif op == '3':
-                Arbol_Gramatica()
-                break
-            elif op == '4':
-                # GenerarAPE()
-                break
-            elif op == '0':
-                a = False
-                b = True
-            else:
-                print('Selecciona una opcion valida\n')
+def MostrarInformacion(resp):
+    z = False
+    while not z:
 
-'''borrarPantalla()
-x = True
-y = False
-while x == True:
-    borrarPantalla()
-    while y == False:
-        op = str(input("Selecciona una opcion para continuar\n"))
-        if op == '1':
-            GramaticasLC()
-            break
+        if resp in lista_nombres_Gramatica:
+            j = lista_nombres_Gramatica(resp)
+            resp = j+1
+        if resp !='-1' and int(resp)>=0:
+            linea=''
+            c=('Nombre: '+lista_Gramaticas[int(resp)-1].nombre)
+            c+='\nNo Terminales'
+            for a in lista_Gramaticas[int(resp)-1].no_terminales:
+                linea=linea+''.join(a)+','
+            linea=linea[:-1]    
+            c+=linea
+            c+='\nTerminales'
+            linea=''
+            for a in lista_Gramaticas[int(resp)-1].terminales:
+                linea=linea+''.join(a)+','
+            linea=linea[:-1]
+            c+=linea
+            c+='\nNo terminal inicial'
+            linea=''
+            linea=lista_Gramaticas[int(resp)-1].nti
+            c+=linea+'\n'
+            c+='Producciones'
+            gramatica=lista_Gramaticas[int(resp)-1].nti
+            entrar=True
+            gram1=''
+            gram2=''
+            for a in lista_Gramaticas[int(resp)-1].no_terminales:
+                if a == gramatica:
+                    for b in lista_Gramaticas[int(resp)-1].producciones:
+                        if a ==b.origen:      
+                            destinos=""
+                            for d in b.destinos:
+                                destinos=destinos+"".join(d)+""
+                            if entrar==True:
+
+                                gram1=gram2+''+a+'>'+str(destinos)
+                                entrar=False            
+                            else:
+                                gram1=gram1+'\n'+'|'+str(destinos)
+                    entrar=True
+                else:
+                    for b in lista_Gramaticas[int(resp)-1].producciones:
+                        if a==b.origen:
+                            destinos=""
+                            for d in b.destinos:
+                                destinos=destinos+"".join(d)+""
+                            if entrar==True:
+                                gram2=gram2+''+b.origen+'>'+str(destinos)+'\n'
+                                entrar=False
+                            else:
+                                gram2=gram2+'|'+str(destinos)+'\n'
+                    entrar=True
+            c=c+'\n'+gram1+'\n'+gram2
+            return c
         else:
-            print('Selecciona una opcion correcta')'''
+            z=True
+
+
+

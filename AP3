@@ -1,0 +1,31 @@
+digraph Gramatica {
+	layout=dot rankdir=LR shape=circle
+	A [shape=circle]
+	B [shape=circle]
+	C [shape=circle]
+	D [shape=circle]
+	E [shape=circle]
+	F [shape=doublecircle]
+	Inicio [shape=plaintext]
+	Inicio -> A
+	A -> B [label="$,$,z"]
+	B -> B [label="0,$,a"]
+	B -> C [label="1,a,$"]
+	C -> D [label="1,$,$"]
+	D -> E [label="1,a,$"]
+	E -> D [label="1,$,$"]
+	D -> F [label="$,z,$"]
+	"Nombre: AP3
+Alfabeto de pila: 0,1
+Estados: A,B,C,D,E,F
+Estado Inicial: A
+Estados de aceptación: F
+Transiciones:
+A,$,$;B,z
+B,0,$;B,a
+B,1,a;C,$
+C,1,$;D,$
+D,1,a;E,$
+E,1,$;D,$
+D,$,z;F,$" [shape=box]
+}
