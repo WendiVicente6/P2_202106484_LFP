@@ -8,9 +8,9 @@ class VentanaArchivoGLC(Toplevel):
     def __init__(self,master=None):
         super().__init__(master=master)
         
-        self.title("CARGAR ARCHIVO AFD")
+        self.title("CARGAR ARCHIVO GLC")
         self.geometry("500x500")
-        inicio=Label(self,text="CARGAR ARCHIVO AFD")
+        inicio=Label(self,text="CARGAR ARCHIVO GLC")
         inicio.pack()
         Frame_AFD2=Frame(self)
         Frame_AFD2.pack()  
@@ -77,7 +77,7 @@ class VentanaArchivoAutomata(Toplevel):
         
         self.title("CARGAR ARCHIVO AUTOMATA PILA")
         self.geometry("500x500")
-        inicio=Label(self,text="CARGAR ARCHIVO AFD")
+        inicio=Label(self,text="CARGAR ARCHIVO")
         inicio.pack()
         Frame_AFD2=Frame(self)
         Frame_AFD2.pack()  
@@ -153,7 +153,7 @@ class VentanaPila_Cadena(Toplevel):
         Frame_AFD2=Frame(self)
         Frame_AFD2.pack()   
 
-        disponible=Label(Frame_AFD2,text="AFD Disponibles")
+        disponible=Label(Frame_AFD2,text="Disponibles")
         disponible.grid(row=5,column=1)
         
 
@@ -169,12 +169,20 @@ class VentanaPila_Cadena(Toplevel):
 
         Boton_AFD=Button(Frame_AFD2,text="Validar Cadena",command=lambda:Cadena(cadena.get(),combo.get()))
         Boton_AFD.grid(row=10,column=2) 
+    
+        Boton_AFD=Button(Frame_AFD2,text="Mostrar Ruta",command=lambda:Cadena_Ruta(cadena.get(),combo.get()))
+        Boton_AFD.grid(row=11,column=2) 
+
+        Boton_AFD=Button(Frame_AFD2,text="Mostrar en una pasada",command=lambda:Cadena_Pasada(cadena.get(),combo.get()))
+        Boton_AFD.grid(row=12,column=2)
 
 ventana = Tk()
 ventana.title("Proyecto 2 ")
 ventana.config(width=400, height=300)
 datos=Label(text="Wendi Paulina Vicente Pérez"+"\n"+"Carnet: 202106484")
 datos.place(x=100,y=80)
+datos=Label(text="Espero un momento, está iniciando el programa...")
+datos.place(x=70,y=150)
 start = time()
  
 ventana.after(5000, ventana.destroy)
@@ -221,12 +229,7 @@ Boton4.grid(row=2,column=1,padx=5,pady=10)
 Boton5=Button(pes1,text="Validar Cadena",bg="white",width=15,height=5,font="Poppins")
 Boton5.bind("<Button>",lambda e:VentanaPila_Cadena(pes1))
 Boton5.grid(row=2,column=2,padx=5,pady=10)
-Boton6=Button(pes1,text="Ruta de Validación",bg="white",width=15,height=5,font="Poppins")
-Boton6.grid(row=3,column=0,padx=5,pady=10)
-Boton7=Button(pes1,text="Recorrido Paso a Paso",bg="white",width=15,height=5,font="Poppins")
-Boton7.grid(row=3,column=1,padx=5,pady=10)
-Boton8=Button(pes1,text="De una pasada",bg="white",width=15,height=5,font="Poppins")
-Boton8.grid(row=3,column=2,padx=5,pady=10)
+
 ventana2.mainloop()
 
 

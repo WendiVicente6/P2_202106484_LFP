@@ -1,5 +1,6 @@
 from os import system, name
 import sys
+from tkinter import END, Frame, Label, Menu, Scrollbar, Tk, filedialog, messagebox,Text, ttk
 
 from Gramaticas import Gramatica, Producciones
 lista_nombres_Gramatica = []
@@ -29,7 +30,7 @@ def Cargar_Gramatica(nom):
             if x==1:
                 nombre = file
                 if (nombre in lista_nombres_Gramatica):
-                    print(f'\nALERTA: La Gramatica *** {nombre} *** sera saltada debido a que ya existe ...\n')
+                    messagebox.showerror('Alerta',f'La Gramatica *** {nombre} *** sera saltada debido a que ya existe ...\n')
                     x = '%'
                 else:
                     lista_nombres_Gramatica.append(nombre)
@@ -47,7 +48,7 @@ def Cargar_Gramatica(nom):
                 for listae in lista_no_terminales:
                     for listaa in lista_terminales:
                         if listaa == listae:
-                            print('\nERROR: No fue posible crear el automata debido a que el alfabeto de entrada contiene simbolos no terminales\n')
+                            messagebox.showerror('\nERROR',' No fue posible crear el automata debido a que el alfabeto de entrada contiene simbolos no terminales\n')
                             lista_nombres_Gramatica.remove(nombre)
                             x = '%'
             
@@ -58,7 +59,7 @@ def Cargar_Gramatica(nom):
                     if einic == ee:
                         recorrer = True
                 if recorrer == False:
-                    print('\nERROR: No fue posible crear el automata debido a que el estado inicial no es un no terminal\n')
+                    messagebox.showerror('\nERROR','No fue posible crear el automata debido a que el estado inicial no es un no terminal\n')
                     lista_nombres_Gramatica.remove(nombre)
                     x = '%'
 
@@ -92,7 +93,7 @@ def Cargar_Gramatica(nom):
                     x = 0
                     lctxt = False
                 else:
-                    print('\nERROR: No fue posible crear la gramatica debido a que la gramatica no es libre de contexto\n')
+                    messagebox.showerror('ERROR',' No fue posible crear una gramatica debido a que la gramatica no es libre de contexto\n')
                     lista_nombres_Gramatica.remove(nombre)
                     lista_producciones = []
                     lista_terminales = []
@@ -108,12 +109,12 @@ def Cargar_Gramatica(nom):
             if x!='%':
                 x+=1
         print(operacion)
-        print(f'\nLa Gramatica *** {nombre} *** fue cargada con exito ...\n')
+        messagebox.showinfo('Información',f'\nLa Gramatica *** {nombre} *** fue cargada con exito ...\n')
 
     except Exception:
         e = sys.exc_info()[1]
         print(e.args[0])
-        print(error)
+        messagebox.showerror(error)
 
 
 def Mostrar():
@@ -132,7 +133,7 @@ def Arbol_Gramatica(resp):
             if resp !='-1' and int(resp)>=0:
                 from graphviz import Graph
 
-                dot = Graph(name='GramaticaLC', encoding='utf-8', format='png', filename='GramaticasLC')
+                dot = Graph(name='GramaticaLC', encoding='utf-8', format='png')
 
                 dot.attr(rankdir='TB', layout='dot', shape='none')
 

@@ -1,7 +1,7 @@
 from tkinter import END, Frame, Label, Menu, Scrollbar, Tk, filedialog, messagebox,Text, ttk
 from Automata import *
 from graphviz import Digraph
-
+import os
 Lista_Automata=Listar()
 
 def Automata_Pila_Archivo(nombre,alfa,Simbolo_Pila,Estados,estado_ini,estados_aceptacion,transiciones):
@@ -134,9 +134,7 @@ def Cadena(cadena,seleccion):
                                         estado+=1
                                         tran=0
                                     else:
-                                        origenes.insert(0,tran)
-                                        estado+=1
-                                        tran=0
+                                        print("No es aceptado")
                                     continue
                                     
                         else:#--------------
@@ -195,24 +193,468 @@ def Cadena(cadena,seleccion):
         else:
             messagebox.showinfo("Información","Revisar entrada... un caracter no pertenece al alfabeto")
     if pila[0] in Automata[2] and len(pila)==1:
-        while Automata[6][origenes[0]][4]!=Automata[6][tran][0] or not pila[0] in Automata[6][tran]:#Buscar Transicion
-            tran+=1
-        if Automata[6][tran][3]!="$":#extraer
-            if len(pila)==0:
-                print("No se puede extraer nada, por lo tanto no es valido")
-            else:
-                if pila[len(pila)-1]==Automata[6][tran][3]:
-                    pila.remove(Automata[6][tran][3])
-                    print("Se extrajo"+Automata[6][tran][3])
-                    
-        elif Automata[6][tran][5]!="$":#inserta
-            pila.append(Automata[6][tran][5])
-            cant_pila+=1
-        origenes.insert(0,tran)
-        estado+=1
-        tran=0
-        messagebox.showinfo("Informacion","Es aceptado")
+        try:
+            while Automata[6][origenes[0]][4]!=Automata[6][tran][0] or not pila[0] in Automata[6][tran]:#Buscar Transicion
+                tran+=1
+            if Automata[6][tran][3]!="$":#extraer
+                if len(pila)==0:
+                    print("No se puede extraer nada, por lo tanto no es valido")
+                else:
+                    if pila[len(pila)-1]==Automata[6][tran][3]:
+                        pila.remove(Automata[6][tran][3])
+                        print("Se extrajo"+Automata[6][tran][3])
+                        
+            elif Automata[6][tran][5]!="$":#inserta
+                pila.append(Automata[6][tran][5])
+                cant_pila+=1
+            origenes.insert(0,tran)
+            estado+=1
+            tran=0
+            messagebox.showinfo("Informacion","Es aceptado")
+        
+        except:
+            messagebox.showinfo("Informacion","No es aceptado")
     else:
-        messagebox.showinfo("Información","No es aceptado")
+            messagebox.showinfo("Información","No es aceptado")
+    
+def Cadena_Ruta(cadena,seleccion):
+    Automata=Lista_Automata.Operar(seleccion)
+    estado=0
+    tran=0
+    origenes=[]
+    pila=[]
+    Ruta=[]
+    cant_pila=0
+    contar_cadena=0
+    for caracter in cadena:
+        contar_cadena+=1
+        
+        if(caracter in Automata[1]):
+                if estado==0:
+                    if caracter in Automata[6][tran]:
+                        if caracter==Automata[6][tran][1]:#Lee entrada
+                            if Automata[6][tran][3]!="$":#extraer
+                                if len(pila)==0:
+                                    print("No se puede extraer nada, por lo tanto no es valido")
+                                else:
+                                    if pila[cant_pila]==Automata[6][tran][3]:
+                                        pila.remove(Automata[6][tran][3])
+                                        Ruta.append(Automata[6][tran][0]+","+(Automata[6][tran][1])+","+(Automata[6][tran][3])+";"+(Automata[6][tran][5])+","+(Automata[6][tran][4]))
+
+                                        print("Se extrajo"+Automata[6][tran][3])
+                            elif Automata[6][tran][5]!="$":#inserta
+                                pila.append(Automata[6][tran][5])
+                                Ruta.append(Automata[6][tran][0]+","+(Automata[6][tran][1])+","+(Automata[6][tran][3])+";"+(Automata[6][tran][5])+","+(Automata[6][tran][4]))
+
+                                cant_pila+=1
+                            origenes.insert(0,tran)
+                            estado+=1
+                            tran=0
+                        else:
+                            origenes.insert(0,tran)
+                            estado+=1
+                            tran=0
+                        continue
+                    elif caracter not in Automata[6][tran]:
+                        if Automata[6][tran][1]=="$":
+                            if caracter==Automata[6][tran][1]:#Lee entrada
+                                if Automata[6][tran][3]!="$":#extraer
+                                    if len(pila)==0:
+                                        print("No se puede extraer nada, por lo tanto no es valido")
+                                    else:
+                                        if pila[0]==Automata[6][tran][3]:
+                                            pila.remove(Automata[6][tran][3])
+                                            Ruta.append(Automata[6][tran][0]+","+(Automata[6][tran][1])+","+(Automata[6][tran][3])+";"+(Automata[6][tran][5])+","+(Automata[6][tran][4]))
+
+                                            print("Se extrajo"+Automata[6][tran][3])
+
+                            elif Automata[6][tran][5]!="$":#inserta
+                                if Automata[6][tran][5]==Automata[6][tran][5]:
+                                    pila.append(Automata[6][tran][5])
+                                    Ruta.append(Automata[6][tran][0]+","+(Automata[6][tran][1])+","+(Automata[6][tran][3])+";"+(Automata[6][tran][5])+","+(Automata[6][tran][4]))
+                                    cant_pila+=1
+                                    origenes.insert(0,tran)
+                                    tran+=1
+                                    if caracter==Automata[6][tran][1]:#Lee entrada
+                                        if Automata[6][tran][3]!="$":#extraer
+                                            if len(pila)==0:
+                                                print("No se puede extraer nada, por lo tanto no es valido")
+                                            else:
+                                                if pila[cant_pila]==Automata[6][tran][3]:
+                                                    pila.remove(Automata[6][tran][3])
+                                                    Ruta.append(Automata[6][tran][0]+","+(Automata[6][tran][1])+","+(Automata[6][tran][3])+";"+(Automata[6][tran][5])+","+(Automata[6][tran][4]))
+
+                                                    print("Se extrajo"+Automata[6][tran][3])
+                                        elif Automata[6][tran][5]!="$":#inserta
+                                            pila.append(Automata[6][tran][5])
+                                            Ruta.append(Automata[6][tran][0]+","+(Automata[6][tran][1])+","+(Automata[6][tran][3])+";"+(Automata[6][tran][5])+","+(Automata[6][tran][4]))
+
+                                            cant_pila+=1
+                                        origenes.insert(0,tran)
+                                        estado+=1
+                                        tran=0
+                                    else:
+                                        print("No es aceptado")
+                                    continue
+                                    
+                        else:#--------------
+                            origenes.insert(0,tran)
+                            estado+=1
+                            tran=0
+                        
+                    else:
+                        while caracter not in Automata[6][tran] or tran>=len(Automata[6]): #Buscar Transicion
+                            tran+=1
+                        if Automata[6][tran][0] in Automata[4]:#Estado inicial
+                            if caracter==Automata[6][tran][1]:#Lee entrada
+                                if Automata[6][tran][3]!="$":#extraer
+                                    if len(pila)==0:
+                                        print("No se puede extraer nada, por lo tanto no es valido")
+                                    else:
+                                        if pila[cant_pila]==Automata[6][tran][3]:
+                                            pila.remove(Automata[6][tran][3])
+                                            print("Se extrajo"+Automata[6][tran][3])
+                                            Ruta.append(Automata[6][tran][0]+","+(Automata[6][tran][1])+","+(Automata[6][tran][3])+";"+(Automata[6][tran][5])+","+(Automata[6][tran][4]))
+
+                            elif Automata[6][tran][5]!="$":#inserta
+                                pila.append(Automata[6][tran][5])
+                                Ruta.append(Automata[6][tran][0]+","+(Automata[6][tran][1])+","+(Automata[6][tran][3])+";"+(Automata[6][tran][5])+","+(Automata[6][tran][4]))
+
+                                cant_pila+=1
+                            origenes.insert(0,tran)
+                            estado+=1
+                            tran=0
+                        else:
+                            origenes.insert(0,tran)
+                            estado+=1
+                            tran=0
+                        
+                elif estado!=0:
+                    
+                        while Automata[6][origenes[0]][4]!=Automata[6][tran][0] or not caracter in Automata[6][tran]:#Buscar Transicion
+                            tran+=1
+                        if caracter==Automata[6][tran][1]:#Lee entrada
+                            if Automata[6][tran][3]!="$":#extraer
+                                if len(pila)==0:
+                                    print("No se puede extraer nada, por lo tanto no es valido")
+                                else:
+                                    if pila[len(pila)-1]==Automata[6][tran][3]:
+                                        pila.remove(Automata[6][tran][3])
+                                        Ruta.append(Automata[6][tran][0]+","+(Automata[6][tran][1])+","+(Automata[6][tran][3])+";"+(Automata[6][tran][5])+","+(Automata[6][tran][4]))
+
+                                        print("Se extrajo"+Automata[6][tran][3])
+                                       
+                            elif Automata[6][tran][5]!="$":#inserta
+                                pila.append(Automata[6][tran][5])
+                                Ruta.append(Automata[6][tran][0]+","+(Automata[6][tran][1])+","+(Automata[6][tran][3])+";"+(Automata[6][tran][5])+","+(Automata[6][tran][4]))
+
+                                cant_pila+=1
+                            origenes.insert(0,tran)
+                            estado+=1
+                            tran=0
+                            continue 
+                        
+                            
+                else:
+                    print("No puede ser aceptado")
+                    break
+        else:
+            messagebox.showinfo("Información","Revisar entrada... un caracter no pertenece al alfabeto")
+    if pila[0] in Automata[2] and len(pila)==1:
+        try:
+            while Automata[6][origenes[0]][4]!=Automata[6][tran][0] or not pila[0] in Automata[6][tran]:#Buscar Transicion
+                tran+=1
+            if Automata[6][tran][3]!="$":#extraer
+                if len(pila)==0:
+                    print("No se puede extraer nada, por lo tanto no es valido")
+                else:
+                    if pila[len(pila)-1]==Automata[6][tran][3]:
+                        pila.remove(Automata[6][tran][3])
+                        Ruta.append(Automata[6][tran][0]+","+(Automata[6][tran][1])+","+(Automata[6][tran][3])+";"+(Automata[6][tran][5])+","+(Automata[6][tran][4]))
+
+                        print("Se extrajo"+Automata[6][tran][3])
+                        
+            elif Automata[6][tran][5]!="$":#inserta
+                pila.append(Automata[6][tran][5])
+                Ruta.append(Automata[6][tran][0]+","+(Automata[6][tran][1])+","+(Automata[6][tran][3])+";"+(Automata[6][tran][5])+","+(Automata[6][tran][4]))
+
+                cant_pila+=1
+            origenes.insert(0,tran)
+            estado+=1
+            tran=0
+            MensajeRuta="\n".join(Ruta)
+            messagebox.showinfo("Ruta",MensajeRuta)
+        
+        except:
+            messagebox.showinfo("Informacion","No es aceptado")
+    else:
+            messagebox.showinfo("Información","No es aceptado")
+
+def Cadena_Pasada(cadena,seleccion):
+    f = open('Pasada.dot','w')
+    etiqueta = '''digraph html{ \n abc [shape=none, margin=0,label=<
+        <table BORDER="1" CELLBORDER="1" CELLSPACING="0">
+        <tr>
+            <td>Iteración</td>
+            <td>Pila</td>
+            <td>Entrada</td>
+            <td>Transición</td>
+        </tr>'''
+
+
 
         
+    Automata=Lista_Automata.Operar(seleccion)
+    estado=0
+    tran=0
+    origenes=[]
+    pila=[]
+    Ruta=[]
+    transicion=0
+    cant_pila=0
+    contar_cadena=0
+    for caracter in cadena:
+        contar_cadena+=1
+        
+        if(caracter in Automata[1]):
+                if estado==0:
+                    if caracter in Automata[6][tran]:
+                        if caracter==Automata[6][tran][1]:#Lee entrada
+                            if Automata[6][tran][3]!="$":#extraer
+                                if len(pila)==0:
+                                    print("No se puede extraer nada, por lo tanto no es valido")
+                                else:
+                                    if pila[cant_pila]==Automata[6][tran][3]:
+                                        pila.remove(Automata[6][tran][3])
+                                        Ruta.append(Automata[6][tran][0]+","+(Automata[6][tran][1])+","+(Automata[6][tran][3])+";"+(Automata[6][tran][5])+","+(Automata[6][tran][4]))
+                                        transicion+=1
+                                        MensajeRuta="\n".join(Ruta)
+                                        Pilas="".join(pila)
+
+                                        etiqueta += '<tr><td>' + str(transicion) + '</td><td>' + str(Pilas) + '</td><td>' + str(caracter) + '</td><td>' + str(Automata[6][tran]) + '</td></tr>'
+
+                            elif Automata[6][tran][5]!="$":#inserta
+                                pila.append(Automata[6][tran][5])
+                                Ruta.append(Automata[6][tran][0]+","+(Automata[6][tran][1])+","+(Automata[6][tran][3])+";"+(Automata[6][tran][5])+","+(Automata[6][tran][4]))
+                                transicion+=1
+                                MensajeRuta="\n".join(Ruta)
+                                Pilas="".join(pila)
+
+                                etiqueta += '<tr><td>' + str(transicion) + '</td><td>' + str(Pilas) + '</td><td>' + str(caracter) + '</td><td>' + str(Automata[6][tran]) + '</td></tr>'
+
+                                cant_pila+=1
+                            origenes.insert(0,tran)
+                            estado+=1
+                            tran=0
+                        else:
+                            origenes.insert(0,tran)
+                            estado+=1
+                            tran=0
+                            transicion+=1
+                            MensajeRuta="\n".join(Ruta)
+                            Pilas="".join(pila)
+
+                            etiqueta += '<tr><td>' + str(transicion) + '</td><td>' + str(Pilas) + '</td><td>' + str(caracter) + '</td><td>' + str(Automata[6][tran]) + '</td></tr>'
+
+                        continue
+                    elif caracter not in Automata[6][tran]:
+                        if Automata[6][tran][1]=="$":
+                            if caracter==Automata[6][tran][1]:#Lee entrada
+                                if Automata[6][tran][3]!="$":#extraer
+                                    if len(pila)==0:
+                                        print("No se puede extraer nada, por lo tanto no es valido")
+                                    else:
+                                        if pila[0]==Automata[6][tran][3]:
+                                            pila.remove(Automata[6][tran][3])
+                                            Ruta.append(Automata[6][tran][0]+","+(Automata[6][tran][1])+","+(Automata[6][tran][3])+";"+(Automata[6][tran][5])+","+(Automata[6][tran][4]))
+                                            transicion+=1
+                                            MensajeRuta="\n".join(Ruta)
+                                            Pilas="".join(pila)
+
+                                            etiqueta += '<tr><td>' + str(transicion) + '</td><td>' + str(Pilas) + '</td><td>' + str(caracter) + '</td><td>' + str(Automata[6][tran]) + '</td></tr>'
+
+                                            print("Se extrajo"+Automata[6][tran][3])
+
+                            elif Automata[6][tran][5]!="$":#inserta
+                                if Automata[6][tran][5]==Automata[6][tran][5]:
+                                    pila.append(Automata[6][tran][5])
+                                    Ruta.append(Automata[6][tran][0]+","+(Automata[6][tran][1])+","+(Automata[6][tran][3])+";"+(Automata[6][tran][5])+","+(Automata[6][tran][4]))
+                                    cant_pila+=1
+                                    transicion+=1
+                                    MensajeRuta="\n".join(Ruta)
+                                    Pilas="".join(pila)
+
+                                    etiqueta += '<tr><td>' + str(transicion) + '</td><td>' + str(Pilas) + '</td><td>' + str("") + '</td><td>' + str(Automata[6][tran]) + '</td></tr>'
+
+                                    origenes.insert(0,tran)
+                                    tran+=1
+                                    if caracter==Automata[6][tran][1]:#Lee entrada
+                                        if Automata[6][tran][3]!="$":#extraer
+                                            if len(pila)==0:
+                                                print("No se puede extraer nada, por lo tanto no es valido")
+                                            else:
+                                                if pila[cant_pila]==Automata[6][tran][3]:
+                                                    pila.remove(Automata[6][tran][3])
+                                                    Ruta.append(Automata[6][tran][0]+","+(Automata[6][tran][1])+","+(Automata[6][tran][3])+";"+(Automata[6][tran][5])+","+(Automata[6][tran][4]))
+                                                    transicion+=1
+                                                    MensajeRuta="\n".join(Ruta)
+                                                    Pilas="".join(pila)
+
+                                                    etiqueta += '<tr><td>' + str(transicion) + '</td><td>' + str(Pilas) + '</td><td>' + str(caracter) + '</td><td>' + str(Automata[6][tran]) + '</td></tr>'
+
+                                                    print("Se extrajo"+Automata[6][tran][3])
+                                        elif Automata[6][tran][5]!="$":#inserta
+                                            pila.append(Automata[6][tran][5])
+                                            Ruta.append(Automata[6][tran][0]+","+(Automata[6][tran][1])+","+(Automata[6][tran][3])+";"+(Automata[6][tran][5])+","+(Automata[6][tran][4]))
+                                            transicion+=1
+                                            MensajeRuta="\n".join(Ruta)
+                                            Pilas="".join(pila)
+
+                                            etiqueta += '<tr><td>' + str(transicion) + '</td><td>' + str(Pilas) + '</td><td>' + str(caracter) + '</td><td>' + str(Automata[6][tran]) + '</td></tr>'
+
+                                            cant_pila+=1
+                                        origenes.insert(0,tran)
+                                        estado+=1
+                                        tran=0
+                                    else:
+                                        print("No es aceptado")
+                                    continue
+                                    
+                        else:#--------------
+                            origenes.insert(0,tran)
+                            estado+=1
+                            tran=0
+                            transicion+=1
+                            MensajeRuta="\n".join(Ruta)
+                            Pilas="".join(pila)
+
+                            etiqueta += '<tr><td>' + str(transicion) + '</td><td>' + str(Pilas) + '</td><td>' + str(caracter) + '</td><td>' + str(Automata[6][tran]) + '</td></tr>'
+
+                        
+                    else:
+                        while caracter not in Automata[6][tran] or tran>=len(Automata[6]): #Buscar Transicion
+                            tran+=1
+                        if Automata[6][tran][0] in Automata[4]:#Estado inicial
+                            if caracter==Automata[6][tran][1]:#Lee entrada
+                                if Automata[6][tran][3]!="$":#extraer
+                                    if len(pila)==0:
+                                        print("No se puede extraer nada, por lo tanto no es valido")
+                                    else:
+                                        if pila[cant_pila]==Automata[6][tran][3]:
+                                            pila.remove(Automata[6][tran][3])
+                                            print("Se extrajo"+Automata[6][tran][3])
+                                            Ruta.append(Automata[6][tran][0]+","+(Automata[6][tran][1])+","+(Automata[6][tran][3])+";"+(Automata[6][tran][5])+","+(Automata[6][tran][4]))
+                                            transicion+=1
+                                            MensajeRuta="\n".join(Ruta)
+                                            Pilas="".join(pila)
+
+                                            etiqueta += '<tr><td>' + str(transicion) + '</td><td>' + str(Pilas) + '</td><td>' + str(caracter) + '</td><td>' + str(Automata[6][tran]) + '</td></tr>'
+
+                            elif Automata[6][tran][5]!="$":#inserta
+                                pila.append(Automata[6][tran][5])
+                                Ruta.append(Automata[6][tran][0]+","+(Automata[6][tran][1])+","+(Automata[6][tran][3])+";"+(Automata[6][tran][5])+","+(Automata[6][tran][4]))
+                                transicion+=1
+                                MensajeRuta="\n".join(Ruta)
+                                Pilas="".join(pila)
+
+                                etiqueta += '<tr><td>' + str(transicion) + '</td><td>' + str(Pilas) + '</td><td>' + str(caracter) + '</td><td>' + str(Automata[6][tran]) + '</td></tr>'
+
+                                cant_pila+=1
+                            origenes.insert(0,tran)
+                            estado+=1
+                            tran=0
+                        else:
+                            origenes.insert(0,tran)
+                            estado+=1
+                            tran=0
+                            transicion+=1
+                            MensajeRuta="\n".join(Ruta)
+                            Pilas="".join(pila)
+
+                            etiqueta += '<tr><td>' + str(transicion) + '</td><td>' + str(Pilas) + '</td><td>' + str(caracter) + '</td><td>' + str(Automata[6][tran]) + '</td></tr>'
+
+                        
+                elif estado!=0:
+                    
+                        while Automata[6][origenes[0]][4]!=Automata[6][tran][0] or not caracter in Automata[6][tran]:#Buscar Transicion
+                            tran+=1
+                        if caracter==Automata[6][tran][1]:#Lee entrada
+                            if Automata[6][tran][3]!="$":#extraer
+                                if len(pila)==0:
+                                    print("No se puede extraer nada, por lo tanto no es valido")
+                                else:
+                                    if pila[len(pila)-1]==Automata[6][tran][3]:
+                                        pila.remove(Automata[6][tran][3])
+                                        Ruta.append(Automata[6][tran][0]+","+(Automata[6][tran][1])+","+(Automata[6][tran][3])+";"+(Automata[6][tran][5])+","+(Automata[6][tran][4]))
+                                        transicion+=1
+                                        MensajeRuta="\n".join(Ruta)
+                                        Pilas="".join(pila)
+
+                                        etiqueta += '<tr><td>' + str(transicion) + '</td><td>' + str(Pilas) + '</td><td>' + str(caracter) + '</td><td>' + str(Automata[6][tran]) + '</td></tr>'
+
+                                        print("Se extrajo"+Automata[6][tran][3])
+                                       
+                            elif Automata[6][tran][5]!="$":#inserta
+                                pila.append(Automata[6][tran][5])
+                                Ruta.append(Automata[6][tran][0]+","+(Automata[6][tran][1])+","+(Automata[6][tran][3])+";"+(Automata[6][tran][5])+","+(Automata[6][tran][4]))
+                                transicion+=1
+                                MensajeRuta="\n".join(Ruta)
+                                Pilas="".join(pila)
+
+                                etiqueta += '<tr><td>' + str(transicion) + '</td><td>' + str(Pilas) + '</td><td>' + str(caracter) + '</td><td>' + str(Automata[6][tran]) + '</td></tr>'
+
+                                cant_pila+=1
+                            origenes.insert(0,tran)
+                            estado+=1
+                            tran=0
+                            continue 
+                        
+                            
+                else:
+                    print("No puede ser aceptado")
+                    break
+        else:
+            messagebox.showinfo("Información","Revisar entrada... un caracter no pertenece al alfabeto")
+    if pila[0] in Automata[2] and len(pila)==1:
+        try:
+            while Automata[6][origenes[0]][4]!=Automata[6][tran][0] or not pila[0] in Automata[6][tran]:#Buscar Transicion
+                tran+=1
+            if Automata[6][tran][3]!="$":#extraer
+                if len(pila)==0:
+                    print("No se puede extraer nada, por lo tanto no es valido")
+                else:
+                    if pila[len(pila)-1]==Automata[6][tran][3]:
+                        pila.remove(Automata[6][tran][3])
+                        Ruta.append(Automata[6][tran][0]+","+(Automata[6][tran][1])+","+(Automata[6][tran][3])+";"+(Automata[6][tran][5])+","+(Automata[6][tran][4]))
+                        transicion+=1
+                        MensajeRuta="\n".join(Ruta)
+                        Pilas="".join(pila)
+
+                        etiqueta += '<tr><td>' + str(transicion) + '</td><td>' + str(Pilas) + '</td><td>' + str("") + '</td><td>' + str(Automata[6][tran]) + '</td></tr>'
+
+                        print("Se extrajo"+Automata[6][tran][3])
+                        
+            elif Automata[6][tran][5]!="$":#inserta
+                pila.append(Automata[6][tran][5])
+                Ruta.append(Automata[6][tran][0]+","+(Automata[6][tran][1])+","+(Automata[6][tran][3])+";"+(Automata[6][tran][5])+","+(Automata[6][tran][4]))
+                transicion+=1
+                MensajeRuta="\n".join(Ruta)
+                Pilas="".join(pila)
+
+                etiqueta += '<tr><td>' + str(transicion) + '</td><td>' + str(Pilas) + '</td><td>' + str("") + '</td><td>' + str(Automata[6][tran]) + '</td></tr>'
+
+                cant_pila+=1
+            origenes.insert(0,tran)
+            estado+=1
+            tran=0
+            MensajeRuta="\n".join(Ruta)
+        
+        except:
+            messagebox.showinfo("Informacion","No es aceptado")
+    else:
+            messagebox.showinfo("Información","No es aceptado")
+    etiqueta += '</table>>];}'
+    f.write(etiqueta)
+    f.close()
+    os.system('dot -Tpdf Pasada.dot -o Pasada.pdf')
+    os.startfile("Pasada.pdf")
